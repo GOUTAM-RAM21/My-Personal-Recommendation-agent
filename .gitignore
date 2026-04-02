@@ -25,10 +25,8 @@ bwa-nextjs/node_modules/
 bwa-nextjs/.vercel/
 
 # ─── Generated blog content ────────────────────────────────────────────────
-images/
-*.md
-!README.md
-!.env.example
+# Blog markdown files are intentionally tracked as project outputs
+images/                  # generated images (binary, large)
 
 # ─── Jupyter Notebooks (outputs) ───────────────────────────────────────────
 # Uncomment to strip notebook outputs before commit:

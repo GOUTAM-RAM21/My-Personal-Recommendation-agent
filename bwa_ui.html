@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BWA — Blog Writing Agent</title>
+<meta name="description" content="LangGraph-powered multi-agent AI that researches topics and writes technical blogs autonomously."/>
+<link rel="stylesheet" href="bwa_ui.css"/>
+</head>
+<body>
+
+<!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+<aside class="sidebar">
+
+  <!-- Logo -->
+  <div class="logo-row">
+    <div>
+      <div class="logo-text">BWA</div>
+      <div class="logo-sub">Blog Writing Agent</div>
+    </div>
+    <div style="margin-left:auto">
+      <span class="pulse-dot" title="Live"></span>
+    </div>
+  </div>
+
+  <!-- Generate Section -->
+  <div class="sidebar-section">
+    <div class="section-label">Generate New Blog</div>
+
+    <textarea
+      id="topic-input"
+      class="topic-input"
+      placeholder="e.g. How NVIDIA NIM makes LLM inference 5× faster…"
+      rows="4"
+    ></textarea>
+
+    <div class="date-row">
+      <label class="date-label">As-of date</label>
+      <input type="date" id="as-of-date" class="date-input"/>
+    </div>
+
+    <!-- Progress bar -->
+    <div id="progress-wrap" class="progress-bar-wrap" style="display:none;margin-top:12px">
+      <div id="progress-fill" class="progress-bar-fill" style="width:0%"></div>
+    </div>
+
+    <button id="generate-btn" class="generate-btn">🚀 Generate Blog</button>
+  </div>
+
+  <div class="sidebar-divider"></div>
+
+  <!-- Past Blogs -->
+  <div class="sidebar-section" style="padding-bottom:4px">
+    <div class="section-label">Past Blogs</div>
+  </div>
+  <div id="past-blogs-list" class="past-blogs-list"></div>
+
+  <button class="load-btn">📂 Load Selected Blog</button>
+</aside>
+
+<!-- ═══════════════════ MAIN ═══════════════════ -->
+<main class="main">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-row">
+      <h1 class="main-title">Blog Writing Agent</h1>
+      <button class="deploy-btn">Deploy ↗</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-row">
+      <button class="tab-btn active" data-tab="plan">🧩 Plan</button>
+      <button class="tab-btn" data-tab="evidence">🔎 Evidence</button>
+      <button class="tab-btn" data-tab="preview">📝 Markdown Preview</button>
+      <button class="tab-btn" data-tab="images">🖼 Images</button>
+      <button class="tab-btn" data-tab="logs">🧾 Logs</button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- ─── PLAN TAB ─── -->
+    <div id="tab-plan" class="tab-panel active">
+
+      <!-- Status banner -->
+      <div id="status-banner" class="status-banner" style="display:flex">
+        <span class="check">✅</span>
+        <span class="status-text">Generation complete — 6 sections written in parallel</span>
+        <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted)">55.0s</span>
+      </div>
+
+      <!-- Plan card -->
+      <div class="card">
+        <div class="card-title">
+          <span class="card-title-icon">◈</span> Plan
+        </div>
+
+        <div id="blog-title-display" class="blog-title-display"></div>
+
+        <div class="meta-chips">
+          <div id="chip-audience" class="meta-chip">
+            <span class="chip-icon">👥</span>
+            <span>Audience:</span>
+            <span class="chip-val">—</span>
+          </div>
+          <div id="chip-tone" class="meta-chip">
+            <span class="chip-icon">🎨</span>
+            <span>Tone:</span>
+            <span class="chip-val">—</span>
+          </div>
+          <div id="chip-kind" class="meta-chip">
+            <span class="chip-icon">📄</span>
+            <span>Kind:</span>
+            <span class="chip-val">—</span>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <table class="plan-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Words</th>
+              <th>Research</th>
+              <th>Citations</th>
+              <th>Code</th>
+              <th>Tags</th>
+            </tr>
+          </thead>
+          <tbody id="plan-tbody"></tbody>
+        </table>
+
+        <!-- Accordion -->
+        <div class="accordion">
+          <button id="accordion-toggle" class="accordion-toggle">
+            Task Details (JSON)
+            <span class="arrow">▼</span>
+          </button>
+          <div id="accordion-body" class="accordion-body">
+            <div id="json-block" class="code-block" style="margin-top:10px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── EVIDENCE TAB ─── -->
+    <div id="tab-evidence" class="tab-panel">
+      <div class="card">
+        <div class="card-title"><span class="card-title-icon">◈</span> Research Evidence</div>
+        <div
+          id="evidence-grid"
+          class="evidence-grid"
+          style="margin-top:4px"
+        ></div>
+      </div>
+    </div>
+
+    <!-- ─── MARKDOWN PREVIEW TAB ─── -->
+    <div id="tab-preview" class="tab-panel">
+      <div class="card">
+        <div class="card-title"><span class="card-title-icon">◈</span> Markdown Preview</div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+          <span id="readtime" class="readtime-badge">⏱ — min read</span>
+          <div style="display:flex;gap:8px">
+            <button class="deploy-btn" id="dl-md">⬇ Download MD</button>
+            <button class="deploy-btn" id="dl-zip">📦 Bundle ZIP</button>
+          </div>
+        </div>
+
+        <div id="md-content" class="md-preview"></div>
+      </div>
+    </div>
+
+    <!-- ─── IMAGES TAB ─── -->
+    <div id="tab-images" class="tab-panel">
+      <div class="card">
+        <div class="card-title"><span class="card-title-icon">◈</span> AI-Generated Diagrams</div>
+        <div id="images-grid" class="images-grid"></div>
+      </div>
+    </div>
+
+    <!-- ─── LOGS TAB ─── -->
+    <div id="tab-logs" class="tab-panel">
+      <div class="card">
+        <div class="card-title">
+          <span class="card-title-icon">◈</span> Pipeline Logs
+          <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--success)">● Live</span>
+        </div>
+        <div id="terminal" class="terminal"></div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<!-- ═══ LIGHTBOX ═══ -->
+<div id="lightbox" class="lightbox">
+  <button id="lightbox-close" class="lightbox-close">✕</button>
+  <img src="" alt="" style="max-width:85vw;max-height:85vh"/>
+</div>
+
+<script>
+  // Set today's date
+  document.getElementById('as-of-date').valueAsDate = new Date();
+</script>
+<script src="bwa_ui.js"></script>
+</body>
+</html>
