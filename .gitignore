@@ -1,0 +1,50 @@
+# ─── Python ────────────────────────────────────────────────────────────────
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg
+
+# ─── Environment / Secrets ─────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ─── Next.js ───────────────────────────────────────────────────────────────
+bwa-nextjs/.next/
+bwa-nextjs/out/
+bwa-nextjs/node_modules/
+bwa-nextjs/.vercel/
+
+# ─── Generated blog content ────────────────────────────────────────────────
+images/
+*.md
+!README.md
+!.env.example
+
+# ─── Jupyter Notebooks (outputs) ───────────────────────────────────────────
+# Uncomment to strip notebook outputs before commit:
+# *.ipynb
+
+# ─── macOS ─────────────────────────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ─── IDEs ──────────────────────────────────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# ─── Logs ──────────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
